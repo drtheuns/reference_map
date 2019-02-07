@@ -89,7 +89,6 @@ defmodule ReferenceMap.Serializer do
     resource
     |> serialize_resource(context)
     |> maybe_add_meta(context)
-    |> IO.inspect()
   end
 
   defp serialize_resource(resource, context) do

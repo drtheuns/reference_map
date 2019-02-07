@@ -114,7 +114,7 @@ defmodule ReferenceMapTest do
     struct(Author, map)
   end
 
-  test "to_reference_map/2 should render nested maps" do
+  test "serialize/2 should render nested resources" do
     post_author = author_fixture()
     post = post_fixture(%{author: post_author})
 
@@ -156,7 +156,7 @@ defmodule ReferenceMapTest do
     assert ReferenceMap.serialize(data, "post.json") == expected_response
   end
 
-  test "render_api can lists of nested resources" do
+  test "serialize/2 should render nested resources with lists" do
     comment_author = author_fixture()
     comment = comment_fixture(%{author: comment_author})
     post_author = author_fixture()
