@@ -157,11 +157,17 @@ defmodule ReferenceMap.Serializer do
   end
 
   defp add_child_resource(serialized, resource, context, related_view) do
-    context =
-      context
-      |> update_context(related_view)
-      |> Map.put(:phoenix_context, %{context.phoenix_context | data: resource})
+    context = update_context(context, related_view, resource)
+    is_rendered = rendered?(serialized, resource, related_view)
 
+    maybe_add_include(serialized, resource, context, related_view, is_rendered)
+  end
+
+  defp maybe_add_include(serialized, _, _, _, true = _already_rendered) do
+    serialized
+  end
+
+  defp maybe_add_include(serialized, resource, context, related_view, _unrendered) do
     rendered = render_from_view(resource, context)
 
     put_in(
@@ -176,10 +182,15 @@ defmodule ReferenceMap.Serializer do
     |> add_included_resources(resource, context)
   end
 
-  defp update_context(context, %RelatedView{} = related_view) do
+  defp rendered?(serialized, resource, related_view) do
+    get_in(serialized, [:included, related_view.name, Map.get(resource, related_view.id)]) != nil
+  end
+
+  defp update_context(context, %RelatedView{} = related_view, resource) do
     Map.merge(context, %{
       view: related_view.view,
-      template: related_view.template
+      template: related_view.template,
+      phoenix_context: %{context.phoenix_context | data: resource}
     })
   end
 
