@@ -1,18 +1,3 @@
 defmodule ReferenceMap do
-  @moduledoc """
-  Documentation for ReferenceMap.
-  """
-
-  @doc """
-  Hello world.
-
-  ## Examples
-
-      iex> ReferenceMap.hello()
-      :world
-
-  """
-  def hello do
-    :world
-  end
+  defdelegate serialize(data, template), to: ReferenceMap.Serializer, as: :from_render
 end
