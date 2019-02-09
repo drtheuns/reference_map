@@ -16,6 +16,8 @@ defmodule ReferenceMapTest do
   end
 
   defmodule PostView do
+    use ReferenceMap.View, id: :uuid
+
     def render("post.json", %{data: post}) do
       %{
         id: post.uuid,
@@ -27,23 +29,24 @@ defmodule ReferenceMapTest do
       }
     end
 
+    @impl true
     def relationships(_conn) do
       %{
-        comments: %ReferenceMap.RelatedView{
+        comments: %RelatedView{
           view: ReferenceMapTest.CommentView,
           template: "comment.json"
         },
-        author: %ReferenceMap.RelatedView{
+        author: %RelatedView{
           view: ReferenceMapTest.AuthorView,
           template: "author.json"
         }
       }
     end
-
-    def id(_conn), do: :uuid
   end
 
   defmodule CommentView do
+    use ReferenceMap.View, id: :uuid
+
     def render("comment.json", %{data: comment}) do
       %{
         id: comment.uuid,
@@ -54,19 +57,20 @@ defmodule ReferenceMapTest do
       }
     end
 
+    @impl true
     def relationships(_conn) do
       %{
-        author: %ReferenceMap.RelatedView{
+        author: %RelatedView{
           view: ReferenceMapTest.AuthorView,
           template: "author.json"
         }
       }
     end
-
-    def id(_conn), do: :uuid
   end
 
   defmodule AuthorView do
+    use ReferenceMap.View, id: :uuid
+
     def render("author.json", %{data: author}) do
       %{
         id: author.uuid,
@@ -76,11 +80,6 @@ defmodule ReferenceMapTest do
         }
       }
     end
-
-    def relationships(_conn) do
-    end
-
-    def id(_conn), do: :uuid
   end
 
   def post_fixture(attrs \\ %{}) do
@@ -114,6 +113,7 @@ defmodule ReferenceMapTest do
     struct(Author, map)
   end
 
+  @tag :positive
   test "serialize/2 should render nested resources" do
     post_author = author_fixture()
     post = post_fixture(%{author: post_author})
@@ -156,6 +156,7 @@ defmodule ReferenceMapTest do
     assert ReferenceMap.serialize(data, "post.json") == expected_response
   end
 
+  @tag :positive
   test "serialize/2 should render nested resources with lists" do
     comment_author = author_fixture()
     comment = comment_fixture(%{author: comment_author})
@@ -219,6 +220,36 @@ defmodule ReferenceMapTest do
       view_template: "index.json",
       # We want the post.author to be included
       relations: ["author", "comments.author"]
+    }
+
+    assert ReferenceMap.serialize(data, "post.json") == expected_response
+  end
+
+  @tag :negative
+  test "serialize/2 won't crash when relation is not loaded" do
+    post = post_fixture()
+
+    expected_response = %{
+      data: %{
+        id: post.uuid,
+        type: "post",
+        attributes: %{
+          title: post.title,
+          body: post.body
+        },
+        # Since the relation was requested (but doesn't exist), it should be rendered.
+        relationships: %{author: nil}
+      }
+    }
+
+    # Emulate a render call from the controller
+    data = %{
+      data: post,
+      conn: %{},
+      view_module: PostView,
+      view_template: "show.json",
+      # We want the post.author to be included
+      relations: ["author"]
     }
 
     assert ReferenceMap.serialize(data, "post.json") == expected_response

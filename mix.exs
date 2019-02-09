@@ -4,7 +4,7 @@ defmodule ReferenceMap.MixProject do
   def project do
     [
       app: :reference_map,
-      version: "0.1.0",
+      version: "0.2.0",
       elixir: "~> 1.7",
       start_permanent: Mix.env() == :prod,
       deps: deps()
@@ -23,7 +23,8 @@ defmodule ReferenceMap.MixProject do
     [
       {:dialyxir, "~> 0.5.1", only: [:dev], runtime: false},
       {:ex_doc, "~> 0.19", only: :dev, runtime: false},
-      {:elixir_uuid, "~> 1.2"}
+      {:elixir_uuid, "~> 1.2", only: [:test]},
+      {:plug, "~> 1.7"}
     ]
   end
 end

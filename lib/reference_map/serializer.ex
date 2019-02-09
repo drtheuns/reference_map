@@ -68,6 +68,8 @@ defmodule ReferenceMap.Serializer do
     end)
   end
 
+  defp get_reference_to_resource(nil, _id_field), do: nil
+
   defp get_reference_to_resource(resource, id_field) when is_list(resource) do
     Enum.map(resource, &get_reference_to_resource(&1, id_field))
   end
@@ -92,6 +94,10 @@ defmodule ReferenceMap.Serializer do
 
       add_child_resource(serialized, resource, context, related_view)
     end)
+  end
+
+  defp add_child_resource(serialized, _resource = nil, _context, _related_view) do
+    serialized
   end
 
   defp add_child_resource(serialized, collection, context, related_view)
@@ -156,6 +162,6 @@ defmodule ReferenceMap.Serializer do
     |> Map.get(key)
     |> ReferenceMap.Utils.maybe_set_default([Access.key(:access_key)], key)
     |> ReferenceMap.Utils.maybe_set_default([Access.key(:name)], key)
-    |> Map.put(:id, view.id(conn))
+    |> ReferenceMap.Utils.maybe_set_default([Access.key(:id)], view.id(conn))
   end
 end

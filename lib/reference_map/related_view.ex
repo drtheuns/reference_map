@@ -1,7 +1,7 @@
 defmodule ReferenceMap.RelatedView do
   @enforce_keys [:view, :template]
 
-  defstruct [:view, :template, :name, :access_key]
+  defstruct [:view, :template, :name, :access_key, :id]
 
   @typedoc """
   The type to use when specifying relationships inside the `relationships/1`
@@ -15,11 +15,14 @@ defmodule ReferenceMap.RelatedView do
   * `:access_key`: The key that should be used to get this relationship from the
     parent resource. This allows the relationship name to differ from the actual
     foreign key.
+  * `:id`: The key used when rendering a reference to this related resource. Defaults to
+    the key returned by the `ReferenceMap.View.id/1` callback.
   """
   @type t :: %__MODULE__{
           view: atom(),
           template: String.t(),
           name: atom(),
-          access_key: atom()
+          access_key: atom(),
+          id: atom()
         }
 end
