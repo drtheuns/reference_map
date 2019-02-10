@@ -67,5 +67,5 @@ This package is currently not available on hex.pm, as it's not yet production
 ready. For now it can be installed by:
 
 ```
-{:reference_map, git: "https://git.sr.ht/~drtheuns/reference_map", tag: 0.1}
+{:reference_map, git: "https://git.sr.ht/~drtheuns/reference_map", tag: "0.2.0"}
 ```
