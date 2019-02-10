@@ -40,6 +40,8 @@ defmodule ReferenceMap.Utils do
       iex> ReferenceMap.Utils.maybe_set_default(%{hello: 5}, [:hello], 6)
       %{hello: 5}
   """
+  def maybe_set_default(nil, _, _), do: nil
+
   def maybe_set_default(map, path, value) when is_map(map) and is_list(path) do
     update_in(map, path, fn
       nil ->

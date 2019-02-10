@@ -249,7 +249,7 @@ defmodule ReferenceMapTest do
       view_module: PostView,
       view_template: "show.json",
       # We want the post.author to be included
-      relations: ["author"]
+      relations: ["author", "user"]
     }
 
     assert ReferenceMap.serialize(data, "post.json") == expected_response

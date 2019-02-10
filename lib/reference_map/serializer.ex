@@ -59,12 +59,16 @@ defmodule ReferenceMap.Serializer do
     |> Enum.reduce(serialized, fn {relation_key, _}, serialized ->
       related_view = get_related_view(relation_key, context)
 
-      reference =
-        resource
-        |> Map.get(related_view.access_key)
-        |> get_reference_to_resource(related_view.id)
+      if related_view do
+        reference =
+          resource
+          |> Map.get(related_view.access_key)
+          |> get_reference_to_resource(related_view.id)
 
-      put_in(serialized, [Access.key(:relationships, %{}), related_view.name], reference)
+        put_in(serialized, [Access.key(:relationships, %{}), related_view.name], reference)
+      else
+        serialized
+      end
     end)
   end
 
@@ -89,10 +93,14 @@ defmodule ReferenceMap.Serializer do
     |> Enum.reduce(serialized, fn {relation_key, child_includes}, serialized ->
       related_view = get_related_view(relation_key, context)
 
-      resource = Map.get(resource, related_view.access_key)
-      context = %{context | relations: child_includes}
+      if related_view do
+        resource = Map.get(resource, related_view.access_key)
+        context = %{context | relations: child_includes}
 
-      add_child_resource(serialized, resource, context, related_view)
+        add_child_resource(serialized, resource, context, related_view)
+      else
+        serialized
+      end
     end)
   end
 
