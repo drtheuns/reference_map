@@ -23,6 +23,8 @@ defmodule ReferenceMap.Utils do
       iex> ReferenceMap.Utils.path_string_to_atom_list("post.comments.author")
       [:post, :comments, :author]
   """
+  def path_string_to_atom_list(atom) when is_atom(atom), do: atom
+
   def path_string_to_atom_list(string) do
     string
     |> String.split(".")
