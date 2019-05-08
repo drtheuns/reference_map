@@ -13,7 +13,7 @@ defmodule ReferenceMap.Serializer do
   def from_render(data = %{data: resource, conn: conn, view_module: view_module}, template) do
     relations =
       data
-      |> Map.get(:relations, [])
+      |> Map.get(:relations, conn.assigns[:includes] || [])
       |> ReferenceMap.Utils.relation_paths_to_tree()
 
     context = %{
